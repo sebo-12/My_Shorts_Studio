@@ -1,6 +1,8 @@
 #!/bin/bash
 # Installs the HyperFrames plugin pinned to v0.8.106 and replaces its Git LFS
-# pointer files with real content. Runs only in Claude Code cloud sessions.
+# pointer files with real content, points HyperFrames and Remotion at a Chrome
+# Headless Shell, and installs the Remotion project's packages. Runs only in
+# Claude Code cloud sessions.
 #
 # Why the LFS step: Claude Code clones plugin marketplaces without LFS content,
 # and the session git proxy refuses LFS batch requests for repos that are not
@@ -65,6 +67,41 @@ fi
 if [ "${cur_version:-}" != "$VERSION" ] || [ "${cur_sha:-}" != "$TAG_SHA" ] || [ ! -d "${install_path:-/nonexistent}" ]; then
   log "expected $VERSION at $TAG_SHA, found '${cur_version:-none}' at '${cur_sha:-none}'"
   exit 1
+fi
+
+# Point HyperFrames at a Chrome Headless Shell for local rendering. Cloud
+# containers ship one with Playwright, so prefer it over a download.
+find_headless_shell() {
+  local base="${PLAYWRIGHT_BROWSERS_PATH:-/opt/pw-browsers}" bin
+  for bin in "$base"/chromium_headless_shell-*/chrome-linux/headless_shell; do
+    [ -x "$bin" ] && echo "$bin"
+  done | sort -V | tail -n 1
+}
+
+browser_path="${HYPERFRAMES_BROWSER_PATH:-$(find_headless_shell)}"
+if [ -z "$browser_path" ]; then
+  log "no preinstalled headless shell, downloading one"
+  if npx -y "hyperframes@$VERSION" browser ensure >&2; then
+    browser_path=$(npx -y "hyperframes@$VERSION" browser path 2>/dev/null | tail -n 1)
+  fi
+fi
+if [ -n "$browser_path" ] && [ -x "$browser_path" ]; then
+  if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
+    {
+      echo "export HYPERFRAMES_BROWSER_PATH=\"$browser_path\""
+      echo "export REMOTION_BROWSER_EXECUTABLE=\"$browser_path\""
+    } >>"$CLAUDE_ENV_FILE"
+  fi
+  log "rendering browser: $browser_path"
+else
+  log "no headless shell found, local rendering will fail"
+fi
+
+# Install the Remotion project's packages from its lockfile.
+REMOTION_DIR="${CLAUDE_PROJECT_DIR:-.}/remotion"
+if [ -f "$REMOTION_DIR/package-lock.json" ] && [ ! -d "$REMOTION_DIR/node_modules" ]; then
+  log "installing Remotion packages"
+  (cd "$REMOTION_DIR" && npm ci --no-audit --no-fund >&2)
 fi
 
 # Fetch one LFS file. Args: <commit sha> <install dir> <marketplace dir> <relative path>
