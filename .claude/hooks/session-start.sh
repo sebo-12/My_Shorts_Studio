@@ -7,6 +7,9 @@
 # attached to the session. GitHub serves public LFS objects over plain HTTPS at
 # media.githubusercontent.com, so each file is fetched there and checked
 # against the sha256 in its pointer.
+#
+# The 167 rendered test videos under packages/producer/tests are skipped. No
+# plugin skill uses them, and they add about 600 MB per container.
 set -euo pipefail
 
 if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
@@ -25,6 +28,7 @@ PLUGINS_DIR="$HOME/.claude/plugins"
 INSTALLED_JSON="$PLUGINS_DIR/installed_plugins.json"
 MARKET_DIR="$PLUGINS_DIR/marketplaces/$MARKETPLACE"
 LFS_HEADER="^version https://git-lfs.github.com/spec/v1"
+SKIP_PATTERN="^packages/producer/tests/"
 
 log() { echo "[hyperframes-setup] $*" >&2; }
 
@@ -88,11 +92,15 @@ fetch_one() {
 }
 export -f fetch_one
 
-pointers=$(cd "$install_path" && grep -rlI "$LFS_HEADER" . 2>/dev/null | sed 's|^\./||' || true)
+list_pointers() {
+  (cd "$install_path" && grep -rlI "$LFS_HEADER" . 2>/dev/null | sed 's|^\./||' | grep -v "$SKIP_PATTERN" || true)
+}
+
+pointers=$(list_pointers)
 count=$(printf '%s' "$pointers" | grep -c . || true)
 
 if [ "$count" -eq 0 ]; then
-  log "$PLUGIN $VERSION ready, no LFS pointer files left"
+  log "$PLUGIN $VERSION ready, all needed LFS files present (test videos skipped)"
   exit 0
 fi
 
@@ -101,7 +109,7 @@ if printf '%s\n' "$pointers" \
   | xargs -d '\n' -P "$JOBS" -I{} bash -c 'fetch_one "$@"' _ "$cur_sha" "$install_path" "$MARKET_DIR" {}; then
   log "$PLUGIN $VERSION ready, $count LFS files downloaded and verified"
 else
-  left=$(cd "$install_path" && grep -rlI "$LFS_HEADER" . 2>/dev/null | wc -l)
+  left=$(list_pointers | grep -c . || true)
   log "$left LFS files still missing, rerun this script to retry"
   exit 1
 fi
