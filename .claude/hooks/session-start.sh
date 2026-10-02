@@ -97,6 +97,36 @@ else
   log "no headless shell found, local rendering will fail"
 fi
 
+# The session's egress proxy re-signs Chrome's HTTPS traffic with its own CA.
+# curl and Node read the CA bundle, but Chrome only trusts its NSS store, so
+# scripts loaded from a CDN during a render fail with ERR_CERT_AUTHORITY_INVALID
+# until the proxy CA is added there.
+CA_BUNDLE=/root/.ccr/ca-bundle.crt
+NSS_DB="sql:$HOME/.pki/nssdb"
+if [ -f "$CA_BUNDLE" ]; then
+  if ! command -v certutil >/dev/null 2>&1; then
+    log "installing certutil"
+    apt-get install -y -q libnss3-tools >/dev/null 2>&1 \
+      || { apt-get update -q >/dev/null 2>&1 && apt-get install -y -q libnss3-tools >/dev/null 2>&1; } \
+      || log "could not install certutil"
+  fi
+  if command -v certutil >/dev/null 2>&1; then
+    mkdir -p "$HOME/.pki/nssdb"
+    [ -f "$HOME/.pki/nssdb/cert9.db" ] || certutil -d "$NSS_DB" -N --empty-password
+    ca_dir=$(mktemp -d)
+    awk -v dir="$ca_dir" '/BEGIN CERT/{n++} n{print > (dir "/" n ".pem")}' "$CA_BUNDLE"
+    added=0
+    for pem in "$ca_dir"/*.pem; do
+      if openssl x509 -in "$pem" -noout -subject 2>/dev/null | grep -q "agent-proxy"; then
+        added=$((added + 1))
+        certutil -d "$NSS_DB" -A -t "C,," -n "ccr-agent-proxy-$added" -i "$pem"
+      fi
+    done
+    rm -rf "$ca_dir"
+    log "trusted $added proxy CA certificate(s) in Chrome's NSS store"
+  fi
+fi
+
 # Install the Remotion project's packages from its lockfile.
 REMOTION_DIR="${CLAUDE_PROJECT_DIR:-.}/remotion"
 if [ -f "$REMOTION_DIR/package-lock.json" ] && [ ! -d "$REMOTION_DIR/node_modules" ]; then

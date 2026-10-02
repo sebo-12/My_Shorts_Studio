@@ -8,6 +8,7 @@ Vertical short videos (1080x1920), built with HyperFrames or Remotion.
 
 - installs the HyperFrames plugin pinned to v0.8.106
 - exports `HYPERFRAMES_BROWSER_PATH` and `REMOTION_BROWSER_EXECUTABLE`, pointing both at the Chrome Headless Shell that ships with the container
+- adds the session proxy's CA certificate to Chrome's certificate store, so renders can load scripts from CDNs
 - runs `npm ci` in `remotion/`
 
 ## HyperFrames
@@ -18,13 +19,12 @@ Run the CLI with `npx -y hyperframes@0.8.106`. Scaffold a vertical project with:
 npx -y hyperframes@0.8.106 init my-short --non-interactive --resolution portrait
 ```
 
-The cloud environment's network policy blocks public CDNs such as cdn.jsdelivr.net, and the starter `index.html` loads GSAP from there, so renders fail. Install GSAP from npm and load it with a local path instead:
+Templates and registry blocks load scripts such as GSAP from public CDNs. For renders to reach them in a cloud session, two things must hold:
 
-```sh
-cd my-short && npm i gsap@3.14.2
-# in index.html
-<script src="node_modules/gsap/dist/gsap.min.js"></script>
-```
+- The cloud environment uses **Custom** network access with these extra allowed domains, plus the default package manager list: `cdn.jsdelivr.net`, `cdnjs.cloudflare.com`, `unpkg.com`, `static.heygen.ai`. Add `a.basemaps.cartocdn.com` and `server.arcgisonline.com` for map videos.
+- Chrome trusts the session proxy's CA certificate. The session hook adds it to Chrome's certificate store.
+
+HyperFrames may log `Failed to download CDN script ... HTTP 403` before a render. The render still works, because the browser loads the script itself.
 
 ## Remotion
 
