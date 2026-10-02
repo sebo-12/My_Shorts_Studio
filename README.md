@@ -21,8 +21,10 @@ npx -y hyperframes@0.8.106 init my-short --non-interactive --resolution portrait
 
 Templates and registry blocks load scripts such as GSAP from public CDNs. For renders to reach them in a cloud session, two things must hold:
 
-- The cloud environment uses **Custom** network access with these extra allowed domains, plus the default package manager list: `cdn.jsdelivr.net`, `cdnjs.cloudflare.com`, `unpkg.com`, `static.heygen.ai`. Add `a.basemaps.cartocdn.com` and `server.arcgisonline.com` for map videos.
+- The cloud environment uses **Custom** network access with the default package manager list plus these allowed domains: `cdn.jsdelivr.net`, `cdnjs.cloudflare.com`, `unpkg.com`, `static.heygen.ai`.
 - Chrome trusts the session proxy's CA certificate. The session hook adds it to Chrome's certificate store.
+
+Map videos are not supported yet. Their map tiles come from `a.basemaps.cartocdn.com` and `server.arcgisonline.com`, which are not allowed. To enable map videos, add both domains to the environment's allowed domains and update `CLAUDE.md`.
 
 HyperFrames may log `Failed to download CDN script ... HTTP 403` before a render. The render still works, because the browser loads the script itself.
 
