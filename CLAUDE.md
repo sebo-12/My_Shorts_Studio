@@ -32,4 +32,5 @@ Video footage never goes on `main`. Each video gets a throwaway footage branch t
 
 - Open with the video's own topic. Every element in the first seconds must relate to what the video teaches, for example showing the problem the video solves. No generic attention grabbers such as "STOP" or "WAIT" headlines, alarms, or flashing text unrelated to the topic. The hook should feel confident, not like begging for attention.
 - On talking-head footage, zoom in and out on the user's face where it helps: punch in on key words, push in slowly during explanations, and change the framing at cuts to hide jump cuts.
+- Graphics never cover the user's face or body. When a talking-head video needs on-screen graphics, use a split layout: graphics and captions in a cream panel at the top, the user in a rounded window below. Keep the user's head and shoulders fully inside the window at every zoom level. Full-frame footage with no graphics is fine for the opening line and the "Follow for more" ending.
 - The user ends videos by saying "Follow for more" and pointing up. Never cut that ending. Add a Follow button animation where the finger points.
