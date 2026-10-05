@@ -27,3 +27,9 @@ Video footage never goes on `main`. Each video gets a throwaway footage branch t
 - Code or doc changes meant for `main` go on a branch with no footage.
 - When the video is done, give the user the exact commands to delete the footage branch and the session branch, on GitHub and locally. README.md lists them.
 - Never rewrite history or force-push to remove footage. Deleting the branch is the cleanup.
+
+## Video style
+
+- Open with the video's own topic. Every element in the first seconds must relate to what the video teaches, for example showing the problem the video solves. No generic attention grabbers such as "STOP" or "WAIT" headlines, alarms, or flashing text unrelated to the topic. The hook should feel confident, not like begging for attention.
+- On talking-head footage, zoom in and out on the user's face where it helps: punch in on key words, push in slowly during explanations, and change the framing at cuts to hide jump cuts.
+- The user ends videos by saying "Follow for more" and pointing up. Never cut that ending. Add a Follow button animation where the finger points.
