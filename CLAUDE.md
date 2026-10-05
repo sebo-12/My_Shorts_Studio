@@ -14,3 +14,16 @@ The cloud environment uses Custom network access: the default package manager li
 Every other domain is blocked. Map videos do not work yet: their tiles come from `a.basemaps.cartocdn.com` and `server.arcgisonline.com`, which are blocked. Before building a map video, tell the user and ask them to add both domains in the environment's network settings. Then update this file and README.md to match.
 
 If a render fails to load an asset from any other domain, report the blocked domain to the user. Don't work around it silently.
+
+## Footage workflow
+
+Video footage never goes on `main`. Each video gets a throwaway footage branch that is deleted when the video is done, so the repo does not grow.
+
+- The user pushes each video's shots to its own branch, named `footage/<project-slug>`, for example `footage/crtfc-2026-10-04`. The shots sit in a folder named `<Project>_<YYYY-MM-DD>` at the repo root, for example `CRTFC_Prompt_2026-10-04`.
+- At the start of a video, ask for the footage branch name if the user hasn't given it. Fetch that branch and merge it into the session branch.
+- Put everything for that video inside its folder: compositions, scripts, assets, and the rendered MP4. Don't scatter project files across the repo.
+- Commit only the final render. Every pushed file stays in the branch's history until the branch is deleted.
+- Never open a pull request for a footage branch or for any branch that contains footage or renders. GitHub keeps pull request files forever, even after the branch is deleted.
+- Code or doc changes meant for `main` go on a branch with no footage.
+- When the video is done, give the user the exact commands to delete the footage branch and the session branch, on GitHub and locally. README.md lists them.
+- Never rewrite history or force-push to remove footage. Deleting the branch is the cleanup.
