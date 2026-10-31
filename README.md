@@ -76,6 +76,10 @@ git branch -D footage/crtfc-2026-10-04
 
 Don't use Git LFS for footage. GitHub counts deleted LFS files against your storage until you delete the whole repo.
 
+## Content skills
+
+`.claude/skills/` holds five writing skills for ideas, hooks, scripts, captions, and YouTube Shorts strategy, copied from [vyralcontent/content-skills](https://github.com/vyralcontent/content-skills) with the vendor's product pitch removed. Claude loads them in every session. `CLAUDE.md` lists where this repo's video style overrides them.
+
 ## HyperFrames
 
 Run the CLI with `npx -y hyperframes@0.8.106`. Scaffold a vertical project with:
