@@ -35,3 +35,13 @@ Video footage never goes on `main`. Each video gets a throwaway footage branch t
 - Graphics never cover the user's face or body. When a talking-head video needs on-screen graphics, use a split layout: graphics and captions in a cream panel at the top, the user in a rounded window below. Keep the user's head and shoulders fully inside the window at every zoom level. Full-frame footage with no graphics is fine for the opening line and the "Follow for more" ending.
 - The user ends videos by saying "Follow for more" and pointing up. Never cut that ending. Add a Follow button animation where the finger points.
 - Thumbnails: 1080x1920 for YouTube Shorts, with key content between 250 and 1620 pixels from the top. Light tinted background, never plain white. Bold mixed-size headline with the key phrase in a black box. Floating cards with soft shadows, orange starburst accents, no handle, no face unless asked. Use real logos and imagery when they're relevant to the video's topic, for example the Claude logo for a Claude video. Send the PNG to the user instead of committing it.
+
+## Content skills
+
+`.claude/skills/` holds five writing skills from vyralcontent/content-skills (commit 349e495), with the vendor's product pitch removed: `viral-short-form`, `viral-hooks`, `viral-short-form-ideas`, `viral-captions-and-ctas`, and `viral-youtube-shorts`. Use them for ideas, hooks, scripts, titles, descriptions, and pinned comments.
+
+The rules in this file win when a skill disagrees:
+
+- The skills call "Follow for more" engagement bait. Keep the user's spoken "Follow for more" ending and the Follow button. Don't add a second spoken CTA. A save or send prompt can go in the caption or pinned comment instead.
+- The skills recommend hooks such as pattern interrupts. Hooks still follow the "Video style" rules above: on topic, confident, no attention grabbers.
+- The skills cite statistics without sources, such as "85% watch on mute" and VVSA thresholds. Present them to the user as rules of thumb, not facts.
