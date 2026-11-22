@@ -36,6 +36,17 @@ Video footage never goes on `main`. Each video gets a throwaway footage branch t
 - The user ends videos by saying "Follow for more" and pointing down. Never cut that ending. Add a Follow button animation where the finger points.
 - Thumbnails: 1080x1920 for YouTube Shorts, with key content between 250 and 1620 pixels from the top. Light tinted background, never plain white. Bold mixed-size headline with the key phrase in a black box. Floating cards with soft shadows, orange starburst accents, no handle, no face unless asked. Use real logos and imagery when they're relevant to the video's topic, for example the Claude logo for a Claude video. Send the PNG to the user instead of committing it.
 
+## Motion graphics (brand look)
+
+The brand look sets the style and the way videos are edited. Every Short with on-screen graphics follows this style. The graphics themselves come from what each video needs.
+
+- The reference is `References/brand-look-preview.html` in the Youtube Shorts project folder (`/Users/Sebastian/Documents/Youtube Shorts/`). Read it before building any graphics, to learn the style. If it isn't available in the session, ask the user for it instead of guessing the style.
+- Everything in that file is a sample, including its four scenes (page scroll, formula chips, before/after wipe, stat badge) and their text. Use a scene only when the video calls for it. Otherwise design new graphics for the video in the same style.
+- Follow the look: the cream, peach and sand background with its slow drift and paper grain, the orange accent, and the Montserrat, Playfair Display and Instrument Sans fonts.
+- Follow the motion: soft, smooth easing with no snaps or hard cuts. Words rise in from a soft blur, staggers overlap, numbers roll instead of jumping, and each graphic fades out as a whole before the next one starts.
+- Graphics sit in the cream panel above the user's window, following the split layout in "Video style".
+- The "Follow for more" ending always comes last.
+
 ## Content skills
 
 `.claude/skills/` holds five writing skills from vyralcontent/content-skills (commit 349e495), with the vendor's product pitch removed: `viral-short-form`, `viral-hooks`, `viral-short-form-ideas`, `viral-captions-and-ctas`, and `viral-youtube-shorts`. Use them for ideas, hooks, scripts, titles, descriptions, and pinned comments.
